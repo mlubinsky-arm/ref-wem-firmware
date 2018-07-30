@@ -239,7 +239,7 @@ static void light_read(struct light_sensor *s)
     //light sensor uses a multiplier to adjust for the lightpipe
     lux = s->sensor->lux*3.7;
     WEM_VERBOSE_PRINTF(sensors, "light: %u\n", lux);
-    size = snprintf(res_buffer, sizeof(res_buffer), "%u lux", lux);
+    size = snprintf(res_buffer, sizeof(res_buffer), "%u", lux);
 
     display.set_sensor_status(s->id, res_buffer);
     m2mclient->set_resource_value(s->res, res_buffer, size);
@@ -287,11 +287,11 @@ static void dht_read(struct dht_sensor *dht)
     /* verbose printing to screen of sensor values */
     WEM_VERBOSE_PRINTF(sensors, "DHT: temp = %.2fC, humidity = %.2f%%\n", temperature, humidity);
 
-    size = snprintf(res_buffer, sizeof(res_buffer), "%.1f C", temperature);
+    size = snprintf(res_buffer, sizeof(res_buffer), "%.1f", temperature);
     m2mclient->set_resource_value(dht->t_res, res_buffer, size);
     display.set_sensor_status(dht->t_id, (char *)res_buffer);
 
-    size = snprintf(res_buffer, sizeof(res_buffer), "%.0f%%", humidity);
+    size = snprintf(res_buffer, sizeof(res_buffer), "%.0f", humidity);
     m2mclient->set_resource_value(dht->h_res, res_buffer, size);
     display.set_sensor_status(dht->h_id, (char *)res_buffer);
 }
@@ -1738,7 +1738,7 @@ static void init_app(EventQueue *queue)
     const ConnectorClientEndpointInfo* endpoint = m2mclient->get_cloud_client().endpoint_info();
     const char* devicename = endpoint->internal_endpoint_name.c_str();
     if (strcmp("",devicename) == 0)
-       devicename = "9164246ec9d4000000000001001002f1"; // TBD: some dummy
+       devicename = "9164246ec9d400000000000100100204"; // TBD: some dummy
     MQTTDataProvider data_provider(devicename, all_resources_map);
     data_provider.run(net);
 }

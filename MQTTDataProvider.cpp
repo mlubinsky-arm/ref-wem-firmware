@@ -67,9 +67,7 @@ string MQTTDataProvider::getData() {
       json += "\"";
       json += (it->second)->resource_type();
       json += "\":";
-      json += "\"";
       json += (it->second)->get_value_string();
-      json += "\"";
       json += "}";
       json += "}";
       json += "]";
@@ -86,12 +84,15 @@ string MQTTDataProvider::getData() {
     return json;
 }
 
-int checkAndSetTime(NetworkInterface *network) {
+int setTime(NetworkInterface *network) {
+
+   /* Always set time
    uint64_t currTimeSeconds = pal_osGetTime();
    if (currTimeSeconds != 0)
       return 0;
+   */
 
-   printf("!!! RTC Clock is set to zero. Trying to get time from NTP\r\n");
+   printf("!!! Trying to get time from NTP\r\n");
    NTPClient ntp(network);
    int i = 0;
    time_t timestamp = 0;
@@ -100,6 +101,7 @@ int checkAndSetTime(NetworkInterface *network) {
         
       if (timestamp < 0) {
          printf("   An error occurred when getting the time. Code: %lld\r\n", timestamp);
+         break;
       } else {
          printf("   Current time is %s\r\n", ctime(&timestamp));
          pal_osSetStrongTime(timestamp);
@@ -134,7 +136,7 @@ void MQTTDataProvider::run(NetworkInterface *network) {
     }
 
     // make sure we have non zero time
-    if (checkAndSetTime(network) < 0) {
+    if (setTime(network) < 0) {
        printf("Time not set. Exiting!!\r\n");
        return;
     }
